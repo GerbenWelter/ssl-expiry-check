@@ -28,9 +28,9 @@ def ssl_expiry_datetime(hostname: str, port: int) -> datetime.datetime:
     return datetime.datetime.strptime(ssl_info['notAfter'], ssl_date_fmt)
 
 
-def ssl_valid_time_remaining(hostname: str) -> datetime.timedelta:
+def ssl_valid_time_remaining(hostname: str, port:int) -> datetime.timedelta:
     """Get the number of days left in a cert's lifetime."""
-    expires = ssl_expiry_datetime(hostname)
+    expires = ssl_expiry_datetime(hostname, port)
     print(f'SSL cert for {hostname}:{port} expires at {expires.isoformat()}')
     return expires - datetime.datetime.utcnow()
 
@@ -60,13 +60,10 @@ if __name__ == '__main__':
         host = host.strip()
         if ':' in host:
             domain = host.split(':')[0]
-            port = host.split(':')[1]
+            port = int(host.split(':')[1])
         else:
             domain = host
             port = 443
         print(f'Testing host {domain}:{port}')
         message = test_host(domain, port)
-
-    while True:
-        time.sleep(1)
 
